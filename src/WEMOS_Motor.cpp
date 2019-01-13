@@ -13,16 +13,19 @@ static uint8_t lastMotor=_MOTOR_A;
  * receive any command for more than 10 seconds.
  */
 void foo(){
-	Wire.beginTransmission(0x30);
-	Wire.write(lastMotor | (byte)0x10);
-	Wire.write(lastMode);
-	Wire.write((byte)(lastPwmVal >> 8));
-	Wire.write((byte)lastPwmVal);
-	Wire.endTransmission();
+	
+
+ //  //Repeat last command
+	// Wire.beginTransmission(0x30);
+	// Wire.write(lastMotor | (byte)0x10);
+	// Wire.write(lastMode);
+	// Wire.write((byte)(lastPwmVal >> 8));
+	// Wire.write((byte)lastPwmVal);
+	// Wire.endTransmission();
 }
 
-Motor::Motor(uint8_t address, uint8_t motor, uint32_t freq, uint8_t STBY_IO):
-				_address(address), _freq(freq), _STBY_IO(STBY_IO){
+Motor::Motor(uint8_t address, uint8_t motor, uint32_t freq, uint8_t STBY_IO, uint8_t resetPin):
+				_address(address), _freq(freq), _STBY_IO(STBY_IO), _resetPin(resetPin){
 	if(motor==_MOTOR_A){
 		_motor=_MOTOR_A;
 	}else{
@@ -32,6 +35,10 @@ Motor::Motor(uint8_t address, uint8_t motor, uint32_t freq, uint8_t STBY_IO):
 	if(_STBY_IO != STBY_IO_UNDEFINED){
 		pinMode(_STBY_IO,OUTPUT);
 		digitalWrite(_STBY_IO,LOW);
+	}
+
+	if(_resetPin!=UNDEFINED_PIN){
+		pinMode(_resetPin,OUTPUT);
 	}
 }
 
@@ -47,7 +54,7 @@ void Motor::setFrequency(uint32_t freq){
 	Wire.write((byte)(freq >> 8));
 	Wire.write((byte)freq);
 	Wire.endTransmission();
-	ticker.attach(5,foo);
+	//ticker.attach(5,foo);
 }
 
 void Motor::setMotor(MotorMode mode, float pwm_val){
@@ -78,4 +85,17 @@ void Motor::setMotor(MotorMode mode, float pwm_val){
 	Wire.write((byte)(_pwm_val >> 8));
 	Wire.write((byte)_pwm_val);
 	Wire.endTransmission();
+}
+
+void Motor::forceUpdate(){
+  foo();
+}
+
+void Motor::reset(){
+	if(_resetPin!=UNDEFINED_PIN){
+		digitalWrite(_resetPin,LOW);
+	  delay(1);
+	  digitalWrite(_resetPin,HIGH);
+	  delay(10);
+	}
 }
