@@ -2,6 +2,7 @@
 #ifndef __WEMOS_MOTOR_H
 #define __WEMOS_MOTOR_H
 
+#define __WEMOS_MOTOR_DEBUG 0
 
 #if ARDUINO >= 100
  #include "Arduino.h"

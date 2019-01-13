@@ -20,7 +20,7 @@ void foo(){
     Wire.write((byte)(lastPwmVal >> 8));
     Wire.write((byte)lastPwmVal);
     Wire.endTransmission();
-    Serial.println("Ho aggiornato il motore");
+    if(__WEMOS_MOTOR_DEBUG) Serial.println("Ho aggiornato il motore");
 }
 
 Motor::Motor(uint8_t address, uint8_t motor, uint32_t freq, uint8_t STBY_IO, uint8_t resetPin, bool enableAutoUpdate):
@@ -67,10 +67,10 @@ void Motor::setMotor(MotorMode mode, float pwm_val){
 	lastMotor = _motor;
 
 	if(_STBY_IO!=STBY_IO_UNDEFINED){
-		Serial.println("Standby pin defined!");
+		if(__WEMOS_MOTOR_DEBUG) Serial.println("Standby pin defined!");
 		if(mode==MotorMode::STANDBY){
 			digitalWrite(_STBY_IO,LOW);
-			Serial.println("Standby mode active!!");
+			if(__WEMOS_MOTOR_DEBUG) Serial.println("Standby mode active!!");
 			return;
 		}else{
 			digitalWrite(_STBY_IO,HIGH);
@@ -96,12 +96,12 @@ void Motor::forceUpdate(){
 
 void Motor::reset(){
 	if(_resetPin!=UNDEFINED_PIN){
-	  Serial.println("[WEMOS MOTOR] resetting");
+	  if(__WEMOS_MOTOR_DEBUG) Serial.println("[WEMOS MOTOR] resetting");
 	  digitalWrite(_resetPin,LOW);
 	  delay(5);
 	  digitalWrite(_resetPin,HIGH);
 	  delay(10);
 	}else{
-      Serial.println("[WEMOS MOTOR] You have to set the reset pin");
+      if(__WEMOS_MOTOR_DEBUG) Serial.println("[WEMOS MOTOR] You have to set the reset pin");
     }
 }
