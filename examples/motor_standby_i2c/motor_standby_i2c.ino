@@ -1,31 +1,22 @@
 #include "WEMOS_Motor.h"
 
-int pwm;
-
-
 //Motor shiled I2C Address: 0x30
 //PWM frequency: 1000Hz(1kHz)
-Motor M1(0x30, _MOTOR_A, 1000); //Motor A
-
-
+Motor M1(0x30, _MOTOR_A, 1000);
 
 void setup() {
-  Serial.begin(250000);
+  Serial.begin(115200);
+  Wire.begin();
+  M1.begin();
 }
 
 void loop() {
-
-  for (pwm = 40; pwm <= 100; pwm++)
-  {
-    M1.setmotor( _CW, pwm);
-    Serial.printf("A:%d%, B:%d%, DIR:CW\r\n", pwm, 100 - pwm);
-    delay(500);
-    M1.setmotor(_STANDBY);
+  for (int pwm = 50; pwm <= 60; pwm++){
+    M1.setMotor( MotorMode::CW, pwm);
+    Serial.printf("A:%d%%, DIR:CW\r\n", pwm);
+    delay(2000);
+    M1.setMotor(MotorMode::STANDBY);
     Serial.println("Motor A STANDBY");
     delay(100);
   }
-
-  
-
-
 }

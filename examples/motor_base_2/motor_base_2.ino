@@ -1,44 +1,36 @@
 #include "WEMOS_Motor.h"
 
-float pwm;
-
 //Motor shiled I2C Address: 0x30
 //PWM frequency: 1000Hz(1kHz)
-Motor M1(0x30,_MOTOR_A, 1000);//Motor A
-
-
+Motor M1(0x30, _MOTOR_A, 1000);
 
 void setup() {
-  Serial.begin(250000);
+  Serial.begin(115200);
+  Wire.begin();
+  M1.begin();
 }
 
-void loop() {
-  // put your main code here, to run repeatedly:
-  
-  Serial.printf("\r\nTest PWM 30 to 100, step 0.1,CW\r\n");
-  for (pwm = 30; pwm <= 100; pwm+=0.1)
-  {
-    M1.setmotor( _CW, pwm);
-   Serial.println(pwm);
-    
-  }
-  
-  M1.setmotor(_STOP);
-
-  Serial.println("Motor A STOP");
-  delay(200);
-  
-  Serial.printf("Test PWM 30 to 100, step 0.1,CCW\r\n");
-  for (pwm = 30; pwm <= 100; pwm+=0.1)
-  {
-    M1.setmotor(_CCW, pwm);
+void loop() {  
+  Serial.println("Test PWM 30 to 100, step 0.1, CW");
+  for (float pwm = 30; pwm <= 100; pwm+=0.1){
+    M1.setMotor( MotorMode::CW, pwm);
     Serial.println(pwm);
+    delay(100);
   }
   
-  M1.setmotor(_STOP);
-
+  M1.setMotor(MotorMode::STOP);
   Serial.println("Motor A STOP");
-  delay(200);
-
+  delay(1000);
   
+  Serial.println("Test PWM 30 to 100, step 0.1, CCW");
+  for (float pwm = 30; pwm <= 100; pwm+=0.1){
+    M1.setMotor(MotorMode::CCW, pwm);
+    Serial.println(pwm);
+    delay(100);
+  }
+  
+  M1.setMotor(MotorMode::STOP);
+  Serial.println("Motor A STOP");
+
+  delay(1000);
 }
