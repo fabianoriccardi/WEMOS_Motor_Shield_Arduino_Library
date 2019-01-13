@@ -4,7 +4,7 @@
 
 static Ticker ticker;
 
-static MotorMode lastMode = MotorMode::STANDBY; 
+static MotorMode lastMode = MotorMode::STOP; 
 static uint16_t lastPwmVal = 100;
 static uint8_t lastMotor=_MOTOR_A;
 
@@ -13,15 +13,14 @@ static uint8_t lastMotor=_MOTOR_A;
  * receive any command for more than 10 seconds.
  */
 void foo(){
-	
-
- //  //Repeat last command
-	// Wire.beginTransmission(0x30);
-	// Wire.write(lastMotor | (byte)0x10);
-	// Wire.write(lastMode);
-	// Wire.write((byte)(lastPwmVal >> 8));
-	// Wire.write((byte)lastPwmVal);
-	// Wire.endTransmission();
+  //Repeat last command
+	Wire.beginTransmission(0x30);
+	Wire.write(lastMotor | (byte)0x10);
+	Wire.write(lastMode);
+	Wire.write((byte)(lastPwmVal >> 8));
+	Wire.write((byte)lastPwmVal);
+	Wire.endTransmission();
+	Serial.println("Ho aggiornato il motore");
 }
 
 Motor::Motor(uint8_t address, uint8_t motor, uint32_t freq, uint8_t STBY_IO, uint8_t resetPin):
@@ -54,7 +53,7 @@ void Motor::setFrequency(uint32_t freq){
 	Wire.write((byte)(freq >> 8));
 	Wire.write((byte)freq);
 	Wire.endTransmission();
-	//ticker.attach(5,foo);
+	ticker.attach(4,foo);
 }
 
 void Motor::setMotor(MotorMode mode, float pwm_val){
@@ -93,8 +92,9 @@ void Motor::forceUpdate(){
 
 void Motor::reset(){
 	if(_resetPin!=UNDEFINED_PIN){
+		Serial.println("[WEMOS MOTOR] resetting");
 		digitalWrite(_resetPin,LOW);
-	  delay(1);
+	  delay(5);
 	  digitalWrite(_resetPin,HIGH);
 	  delay(10);
 	}
