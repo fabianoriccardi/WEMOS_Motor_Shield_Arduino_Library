@@ -7,24 +7,22 @@
 #######################################
 
 Motor	KEYWORD1
+MotorMode	KEYWORD1
 
 #######################################
 # Methods and Functions (KEYWORD2)
 #######################################
 
-setfreq	KEYWORD2
-setmotor	KEYWORD2
+setMotor	KEYWORD2
 
 #######################################
 # Constants (LITERAL1)
 #######################################
 
-_SHORT_BRAKE	LITERAL1
-_CCW	LITERAL1
-_CW	LITERAL1
-_STOP	LITERAL1
-_STANDBY	LITERAL1
+SHORT_BRAKE	LITERAL1
+CCW			LITERAL1
+CW			LITERAL1
+STOP		LITERAL1
+STANDBY		LITERAL1
 _MOTOR_A	LITERAL1
 _MOTOR_B	LITERAL1
-
-
