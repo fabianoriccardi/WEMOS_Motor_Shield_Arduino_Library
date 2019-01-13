@@ -13,18 +13,18 @@ static uint8_t lastMotor=_MOTOR_A;
  * receive any command for more than 10 seconds.
  */
 void foo(){
-  //Repeat last command
-	Wire.beginTransmission(0x30);
-	Wire.write(lastMotor | (byte)0x10);
-	Wire.write(lastMode);
-	Wire.write((byte)(lastPwmVal >> 8));
-	Wire.write((byte)lastPwmVal);
-	Wire.endTransmission();
-	Serial.println("Ho aggiornato il motore");
+    //Repeat last command
+    Wire.beginTransmission(0x30);
+    Wire.write(lastMotor | (byte)0x10);
+    Wire.write(lastMode);
+    Wire.write((byte)(lastPwmVal >> 8));
+    Wire.write((byte)lastPwmVal);
+    Wire.endTransmission();
+    Serial.println("Ho aggiornato il motore");
 }
 
-Motor::Motor(uint8_t address, uint8_t motor, uint32_t freq, uint8_t STBY_IO, uint8_t resetPin):
-				_address(address), _freq(freq), _STBY_IO(STBY_IO), _resetPin(resetPin){
+Motor::Motor(uint8_t address, uint8_t motor, uint32_t freq, uint8_t STBY_IO, uint8_t resetPin, bool enableAutoUpdate):
+				_address(address), _freq(freq), _STBY_IO(STBY_IO), _resetPin(resetPin), enableAutoUpdate(enableAutoUpdate){
 	if(motor==_MOTOR_A){
 		_motor=_MOTOR_A;
 	}else{
@@ -53,7 +53,11 @@ void Motor::setFrequency(uint32_t freq){
 	Wire.write((byte)(freq >> 8));
 	Wire.write((byte)freq);
 	Wire.endTransmission();
-	ticker.attach(4,foo);
+
+    // NOTE: this introduce a concurrency problem: Wire is not thread safe!
+	if(enableAutoUpdate){
+        ticker.attach(4,foo);  
+    }
 }
 
 void Motor::setMotor(MotorMode mode, float pwm_val){
@@ -92,10 +96,12 @@ void Motor::forceUpdate(){
 
 void Motor::reset(){
 	if(_resetPin!=UNDEFINED_PIN){
-		Serial.println("[WEMOS MOTOR] resetting");
-		digitalWrite(_resetPin,LOW);
+	  Serial.println("[WEMOS MOTOR] resetting");
+	  digitalWrite(_resetPin,LOW);
 	  delay(5);
 	  digitalWrite(_resetPin,HIGH);
 	  delay(10);
-	}
+	}else{
+      Serial.println("[WEMOS MOTOR] You have to set the reset pin");
+    }
 }

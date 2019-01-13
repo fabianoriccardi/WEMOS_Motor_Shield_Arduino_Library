@@ -24,10 +24,11 @@ public:
 	
 	
 	Motor(uint8_t address, uint8_t motor, uint32_t freq, 
-					uint8_t STBY_IO = STBY_IO_UNDEFINED, uint8_t resetPin = UNDEFINED_PIN);
+					uint8_t STBY_IO = STBY_IO_UNDEFINED, uint8_t resetPin = UNDEFINED_PIN,
+                    bool enableAutoUpdate = false);
 
 	/**
-	 * Init the motor shield
+	 * Auto enable should not enable to avoid concurrency problem about Wire library.
 	 */
 	bool begin();
 	
@@ -66,6 +67,8 @@ private:
 	uint32_t _freq;
 	uint8_t _STBY_IO;
 	uint8_t _resetPin;
+
+    bool enableAutoUpdate;
 
 	/**
 	 * Set the pwm frequency
