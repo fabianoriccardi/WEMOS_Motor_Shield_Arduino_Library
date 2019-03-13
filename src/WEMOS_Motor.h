@@ -57,6 +57,12 @@ pwm_val:
 	 */
 	void forceUpdate();
 
+    /**
+     * Resend the last i2c packet to avoid timeout only if enough
+     * time has passed since last command
+     */
+    void softUpdate();
+
 	/**
 	 * reset the component through the dedicated pin
 	 */
@@ -70,6 +76,10 @@ private:
 	uint8_t _resetPin;
 
     bool enableAutoUpdate;
+
+    static unsigned int timestamp;
+
+    static const int period = 5000;
 
 	/**
 	 * Set the pwm frequency

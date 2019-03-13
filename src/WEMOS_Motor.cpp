@@ -54,6 +54,8 @@ void Motor::setFrequency(uint32_t freq){
 	Wire.write((byte)freq);
 	Wire.endTransmission();
 
+    timestamp = millis();
+
     // NOTE: this introduce a concurrency problem: Wire is not thread safe!
 	if(enableAutoUpdate){
         ticker.attach(4,foo);  
@@ -88,10 +90,19 @@ void Motor::setMotor(MotorMode mode, float pwm_val){
 	Wire.write((byte)(_pwm_val >> 8));
 	Wire.write((byte)_pwm_val);
 	Wire.endTransmission();
+
+    timestamp = millis();
 }
 
 void Motor::forceUpdate(){
   foo();
+}
+
+void Motor::softUpdate(){
+  if(millis()-timestamp>period){
+    timestamp = millis();
+    foo();
+  }
 }
 
 void Motor::reset(){
@@ -105,3 +116,5 @@ void Motor::reset(){
       if(__WEMOS_MOTOR_DEBUG) Serial.println("[WEMOS MOTOR] You have to set the reset pin");
     }
 }
+
+unsigned int Motor::timestamp = 0;
